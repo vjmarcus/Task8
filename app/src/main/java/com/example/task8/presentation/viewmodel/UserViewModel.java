@@ -15,9 +15,4 @@ public class UserViewModel extends ViewModel {
         userRepository = new UserRepository();
         mutableLiveData = userRepository.getUserMutableLiveData();
     }
-
-    public void callData(){
-        userRepository = new UserRepository();
-        mutableLiveData = userRepository.getUserMutableLiveData();
-    }
 }

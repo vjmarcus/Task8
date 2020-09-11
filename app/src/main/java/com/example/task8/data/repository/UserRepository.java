@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.task8.data.model.User;
 
+//Дублирует РЕСТ, вызывает эти же методы
 public class UserRepository {
 
     private MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
