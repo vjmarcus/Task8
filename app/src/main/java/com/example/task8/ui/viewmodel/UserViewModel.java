@@ -1,4 +1,4 @@
-package com.example.task8.presentation.viewmodel;
+package com.example.task8.ui.viewmodel;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
