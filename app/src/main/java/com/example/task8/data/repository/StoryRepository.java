@@ -1,15 +1,15 @@
 package com.example.task8.data.repository;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.task8.data.model.Story;
-import com.example.task8.data.model.StoryList;
+import com.example.task8.data.model.StoryResponse;
 import com.example.task8.data.repository.db.StoryDao;
 import com.example.task8.data.repository.db.StoryDatabase;
 import com.example.task8.data.repository.network.ApiFactory;
@@ -17,9 +17,14 @@ import com.example.task8.data.repository.network.NewsApi;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
+
 
 public class StoryRepository {
     private static final String TAG = "MyApp";
@@ -29,6 +34,7 @@ public class StoryRepository {
     private NewsApi newsApi;
     private MutableLiveData<List<Story>> allStoriesLiveData = new MutableLiveData<>();
     private Application application;
+    private  Observable<List<Story>> storyListObservable;
 
     public StoryRepository(Application application) {
         this.application = application;
@@ -39,28 +45,17 @@ public class StoryRepository {
     }
 
     //Load data to LiveData from Web
+    @SuppressLint("CheckResult")
     public LiveData<List<Story>> getLiveDataFromWeb(String key) {
-        deleteAllStoriesInDb();
-        Call<StoryList> call = newsApi.getPostsByDate(key, ApiFactory.getCurrentDate(),
-                ApiFactory.getCurrentDate(), 20, "en", ApiFactory.API_KEY);
-        call.enqueue(new Callback<StoryList>() {
+        newsApi.getPostsByDate(key, ApiFactory.getCurrentDate(),
+                ApiFactory.getCurrentDate(), 20, "en", ApiFactory.API_KEY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Consumer<StoryResponse>() {
             @Override
-            public void onResponse(@NonNull Call<StoryList> call, @NonNull Response<StoryList> response) {
-                Log.d(TAG, "onResponse: " + response);
-                StoryList articlesList = response.body();
-                if (articlesList != null) {
-                    storyList = articlesList.getArticles();
-                    Log.d(TAG, "Good onResponse: " + storyList.size());
-                } else {
-                    Log.d(TAG, "bad onResponse:");
-                }
-                allStoriesLiveData.setValue(storyList);
-//                addStoriesToDatabase();
-            }
-
-            @Override
-            public void onFailure(Call<StoryList> call, Throwable t) {
-                Log.d(TAG, "onFailure: error= " + t.getMessage());
+            public void accept(StoryResponse storyResponse) throws Exception {
+                storyListObservable = Observable.fromArray(storyResponse.getArticles());
+                allStoriesLiveData.setValue(storyResponse.getArticles());
             }
         });
         return allStoriesLiveData;

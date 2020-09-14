@@ -7,12 +7,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class StoryList implements Serializable {
+public class StoryResponse implements Serializable {
     @SerializedName("articles")
     @Expose
     public List<Story> articles = null;
 
-    public StoryList(List<Story> articles) {
+    public StoryResponse(List<Story> articles) {
         this.articles = articles;
     }
 
@@ -28,8 +28,8 @@ public class StoryList implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        StoryList storyList = (StoryList) o;
-        return Objects.equals(articles, storyList.articles);
+        StoryResponse storyResponse = (StoryResponse) o;
+        return Objects.equals(articles, storyResponse.articles);
     }
 
     @Override
