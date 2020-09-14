@@ -51,13 +51,12 @@ public class StoryRepository {
                 ApiFactory.getCurrentDate(), 20, "en", ApiFactory.API_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<StoryResponse>() {
-            @Override
-            public void accept(StoryResponse storyResponse) throws Exception {
-                storyListObservable = Observable.fromArray(storyResponse.getArticles());
-                allStoriesLiveData.setValue(storyResponse.getArticles());
-            }
-        });
+                .subscribe(new Consumer<StoryResponse>() {
+                    @Override
+                    public void accept(StoryResponse storyResponse) throws Exception {
+                        allStoriesLiveData.setValue(storyResponse.getArticles());
+                    }
+                });
         return allStoriesLiveData;
     }
 
