@@ -1,6 +1,5 @@
 package com.example.task8.ui.view;
 
-import androidx.annotation.LongDef;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.Observer;
@@ -18,19 +17,16 @@ import android.widget.Spinner;
 import com.example.task8.R;
 import com.example.task8.business.StoryInteractor;
 import com.example.task8.data.model.Story;
-import com.example.task8.data.model.User;
 import com.example.task8.data.repository.StoryRepository;
 import com.example.task8.ui.adapter.StoryAdapter;
 import com.example.task8.ui.interfaces.RecyclerViewClickListener;
 import com.example.task8.ui.viewmodel.StoryViewModel;
-import com.example.task8.ui.viewmodel.UserViewModel;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements  AdapterView.OnItemSelectedListener{
 
     private static final String TAG = "MyApp";
-    private UserViewModel userViewModel;
     private StoryViewModel storyViewModel;
     private StoryInteractor storyInteractor;
     private StoryRepository storyRepository;
@@ -45,13 +41,7 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        userViewModel = new UserViewModel();
-        userViewModel.mutableLiveData.observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                Log.d(TAG, "user name is: " + user.getName());
-            }
-        });
+
         storyRepository = new StoryRepository(getApplication());
         storyInteractor = new StoryInteractor(storyRepository);
         storyInteractor.getStoryListFromWeb();

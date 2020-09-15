@@ -20,7 +20,7 @@ public class StoryViewModel extends ViewModel {
     public StoryViewModel(StoryInteractor storyInteractor) {
         this.storyInteractor = storyInteractor;
     }
-
+//подписываемся на Обсервер Rx на репозиторий
     public LiveData<List<Story>> getStoryListLiveData() {
         storyListLiveData = storyInteractor.getStoryListLiveData();
         return storyListLiveData;

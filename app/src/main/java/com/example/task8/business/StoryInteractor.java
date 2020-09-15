@@ -8,10 +8,13 @@ import com.example.task8.data.repository.StoryRepository;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+
 public class StoryInteractor {
 
     private StoryRepository storyRepository;
-    private LiveData<List<Story>> storyListLiveData;
+//    private LiveData<List<Story>> storyListLiveData;
+    Observable
 
     public StoryInteractor(StoryRepository storyRepository) {
         this.storyRepository = storyRepository;

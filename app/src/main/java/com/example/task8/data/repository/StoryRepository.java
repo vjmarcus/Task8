@@ -2,6 +2,7 @@ package com.example.task8.data.repository;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.database.Observable;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -17,12 +18,8 @@ import com.example.task8.data.repository.network.NewsApi;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -34,7 +31,7 @@ public class StoryRepository {
     private NewsApi newsApi;
     private MutableLiveData<List<Story>> allStoriesLiveData = new MutableLiveData<>();
     private Application application;
-    private  Observable<List<Story>> storyListObservable;
+    private Observable<List<Story>> storyListObservable;
 
     public StoryRepository(Application application) {
         this.application = application;
@@ -55,9 +52,12 @@ public class StoryRepository {
                     @Override
                     public void accept(StoryResponse storyResponse) throws Exception {
                         allStoriesLiveData.setValue(storyResponse.getArticles());
+                        //Observable.just = storyResponse.getArticles()
+                        // Observable.just(Callable) = BlockingGet  = ответ из Observable минуя подписчик
+                        // вернет чистый респонс, ретурн Observable.just.storyResponse.getArticles()
                     }
                 });
-        return allStoriesLiveData;
+        return Observable ;// хранит данные
     }
 
     //Load data to LiveData from Db
