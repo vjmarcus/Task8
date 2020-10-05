@@ -2,24 +2,30 @@ package com.example.task8.data.repository;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.database.Observable;
 import android.os.AsyncTask;
 import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
+import com.example.task8.App;
 import com.example.task8.data.model.Story;
 import com.example.task8.data.model.StoryResponse;
 import com.example.task8.data.repository.db.StoryDao;
 import com.example.task8.data.repository.db.StoryDatabase;
 import com.example.task8.data.repository.network.ApiFactory;
 import com.example.task8.data.repository.network.NewsApi;
+import com.example.task8.utils.Constants;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -28,36 +34,66 @@ public class StoryRepository {
     private List<Story> storyList;
     private ApiFactory apiFactory;
     private StoryDao storyDao;
-    private NewsApi newsApi;
     private MutableLiveData<List<Story>> allStoriesLiveData = new MutableLiveData<>();
     private Application application;
-    private Observable<List<Story>> storyListObservable;
+    @Inject
+    NewsApi newsApi;
 
     public StoryRepository(Application application) {
         this.application = application;
         StoryDatabase db = StoryDatabase.getInstance(application);
         storyDao = db.storyDao();
-        apiFactory = ApiFactory.getInstance();
-        newsApi = ApiFactory.getNewsApi();
+        App.getAppComponent().injectStoryRepository(this);
     }
 
     //Load data to LiveData from Web
     @SuppressLint("CheckResult")
-    public LiveData<List<Story>> getLiveDataFromWeb(String key) {
-        newsApi.getPostsByDate(key, ApiFactory.getCurrentDate(),
-                ApiFactory.getCurrentDate(), 20, "en", ApiFactory.API_KEY)
+    public void getLiveDataFromWeb(String key) {
+        Observable<StoryResponse> observable = newsApi.getPostsByDate(Constants.KEY, Constants.getCurrentDate(),
+                Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
+        observable
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<StoryResponse>() {
+                .flatMapIterable(new Function<StoryResponse, Iterable<Story>>() {
                     @Override
-                    public void accept(StoryResponse storyResponse) throws Exception {
-                        allStoriesLiveData.setValue(storyResponse.getArticles());
-                        //Observable.just = storyResponse.getArticles()
-                        // Observable.just(Callable) = BlockingGet  = ответ из Observable минуя подписчик
-                        // вернет чистый респонс, ретурн Observable.just.storyResponse.getArticles()
+                    public Iterable<Story> apply(StoryResponse storyResponse) throws Exception {
+                        return storyResponse.getArticles();
+                    }
+                })
+                .filter(new Predicate<Story>() {
+                    @Override
+                    public boolean test(Story story) throws Exception {
+                        return story.getTitle().length() > 20;
+                    }
+                })
+                .map(new Function<Story, Story>() {
+                    @Override
+                    public Story apply(Story story) throws Exception {
+                        story.setTitle(story.getTitle() + " filtered");
+                        return story;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Story>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        //DO NOTHING
+                    }
+
+                    @Override
+                    public void onNext(Story story) {
+                        Log.d(TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        //DO NOTHING
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        //DO NOTHING
                     }
                 });
-        return Observable ;// хранит данные
     }
 
     //Load data to LiveData from Db

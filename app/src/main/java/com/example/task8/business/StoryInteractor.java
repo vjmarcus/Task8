@@ -13,8 +13,7 @@ import io.reactivex.Observable;
 public class StoryInteractor {
 
     private StoryRepository storyRepository;
-//    private LiveData<List<Story>> storyListLiveData;
-    Observable
+    private LiveData<List<Story>> storyListLiveData;
 
     public StoryInteractor(StoryRepository storyRepository) {
         this.storyRepository = storyRepository;
@@ -31,7 +30,7 @@ public class StoryInteractor {
     }
 
     public LiveData<List<Story>> getStoryListFromWeb() {
-        storyListLiveData = storyRepository.getLiveDataFromWeb(getCurrentKey());
+        storyRepository.getLiveDataFromWeb(getCurrentKey());
         return storyListLiveData;
     }
 
