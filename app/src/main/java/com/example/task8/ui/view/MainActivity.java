@@ -31,9 +31,9 @@ import javax.inject.Inject;
 public class MainActivity extends AppCompatActivity implements  AdapterView.OnItemSelectedListener{
 
     private static final String TAG = "MyApp";
-    StoryViewModel storyViewModel;
-    private StoryInteractor storyInteractor;
-    private StoryRepository storyRepository;
+    @Inject StoryViewModel storyViewModel;
+    @Inject StoryInteractor storyInteractor;
+    @Inject StoryRepository storyRepository;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerViewClickListener recyclerViewClickListener;
@@ -47,21 +47,20 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
         setContentView(R.layout.activity_main);
         App.getAppComponent().injectMainActivity(this);
 
-        storyRepository = new StoryRepository(getApplication());
-        storyInteractor = new StoryInteractor(storyRepository);
         storyInteractor.getStoryListFromWeb();
-        storyViewModel = new StoryViewModel(storyInteractor);
-        storyViewModel.getStoryListLiveData().observe(this, new Observer<List<Story>>() {
-            @Override
-            public void onChanged(List<Story> stories) {
-                Log.d(TAG, "onChanged: " + stories.get(0).getAuthor());
-                if (stories != null)
-                    Log.d(TAG, "onChanged: " + stories.size());
-                storyList = stories;
-                //Update recyclerView
-                showStories();
-            }
-        });
+
+        Log.d(TAG, "onCreate: " + storyViewModel.toString());
+//        storyViewModel.getStoryListLiveData().observe(this, new Observer<List<Story>>() {
+//            @Override
+//            public void onChanged(List<Story> stories) {
+//                Log.d(TAG, "onChanged: " + stories.get(0).getAuthor());
+//                if (stories != null)
+//                    Log.d(TAG, "onChanged: " + stories.size());
+//                storyList = stories;
+//                //Update recyclerView
+//                showStories();
+//            }
+//        });
 
         init();
         initRecyclerViewClickListener();

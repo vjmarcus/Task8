@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 
-@Component(modules = {AppModule.class, NewsApiModule.class})
+@Component(modules = {AppModule.class, NewsApiModule.class, StoryViewModelModule.class})
 @Singleton
 public interface AppComponent {
     void injectStoryRepository(StoryRepository storyRepository);

@@ -21,7 +21,9 @@ public class App extends Application {
         Log.d(Constants.TAG, "onCreate: App");
         appComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(getApplicationContext()))
-                .newsApiModule(new NewsApiModule()).build();
+                .newsApiModule(new NewsApiModule())
+                .storyViewModelModule(new StoryViewModelModule(this))
+                .build();
     }
 
     public static AppComponent getAppComponent() {

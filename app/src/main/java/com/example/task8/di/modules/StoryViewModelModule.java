@@ -17,10 +17,10 @@ import dagger.Provides;
 @Module
 public class StoryViewModelModule {
 
-    Context context;
+    Application application;
 
-    public StoryViewModelModule(Context context) {
-        this.context = context;
+    public StoryViewModelModule(Application application) {
+        this.application = application;
     }
 
     @Provides
@@ -43,7 +43,7 @@ public class StoryViewModelModule {
 
     @Provides
     @Singleton
-    Context provideApplicationContext() {
-        return context;
+    Application provideApplication(){
+        return application;
     }
 }
