@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.example.task8.App;
 import com.example.task8.R;
 import com.example.task8.business.StoryInteractor;
 import com.example.task8.data.model.Story;
@@ -24,10 +26,12 @@ import com.example.task8.ui.viewmodel.StoryViewModel;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class MainActivity extends AppCompatActivity implements  AdapterView.OnItemSelectedListener{
 
     private static final String TAG = "MyApp";
-    private StoryViewModel storyViewModel;
+    StoryViewModel storyViewModel;
     private StoryInteractor storyInteractor;
     private StoryRepository storyRepository;
 
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        App.getAppComponent().injectMainActivity(this);
 
         storyRepository = new StoryRepository(getApplication());
         storyInteractor = new StoryInteractor(storyRepository);

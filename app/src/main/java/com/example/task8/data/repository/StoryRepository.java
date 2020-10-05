@@ -2,6 +2,7 @@ package com.example.task8.data.repository;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
@@ -35,19 +36,19 @@ public class StoryRepository {
     private ApiFactory apiFactory;
     private StoryDao storyDao;
     private MutableLiveData<List<Story>> allStoriesLiveData = new MutableLiveData<>();
-    private Application application;
-    @Inject
-    NewsApi newsApi;
+    @Inject NewsApi newsApi;
+    @Inject Context context;
+
 
     public StoryRepository(Application application) {
-        this.application = application;
+        App.getAppComponent().injectStoryRepository(this);
         StoryDatabase db = StoryDatabase.getInstance(application);
         storyDao = db.storyDao();
-        App.getAppComponent().injectStoryRepository(this);
+        Log.d(TAG, "Context " + context.getPackageName());
+
     }
 
     //Load data to LiveData from Web
-    @SuppressLint("CheckResult")
     public void getLiveDataFromWeb(String key) {
         Observable<StoryResponse> observable = newsApi.getPostsByDate(Constants.KEY, Constants.getCurrentDate(),
                 Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
