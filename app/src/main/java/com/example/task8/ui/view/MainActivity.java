@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerViewClickListener recyclerViewClickListener;
     private RecyclerView recyclerView;
-    private String currentTopic;
+    private String searchKey;
     private List<Story> storyList;
 
     @Override
@@ -47,25 +46,22 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
         setContentView(R.layout.activity_main);
         App.getAppComponent().injectMainActivity(this);
 
-        storyInteractor.getStoryListFromWeb();
-
-        Log.d(TAG, "onCreate: " + storyViewModel.toString());
-//        storyViewModel.getStoryListLiveData().observe(this, new Observer<List<Story>>() {
-//            @Override
-//            public void onChanged(List<Story> stories) {
-//                Log.d(TAG, "onChanged: " + stories.get(0).getAuthor());
-//                if (stories != null)
-//                    Log.d(TAG, "onChanged: " + stories.size());
-//                storyList = stories;
-//                //Update recyclerView
-//                showStories();
-//            }
-//        });
+        storyViewModel.getStoryListLiveData().observe(this, new Observer<List<Story>>() {
+            @Override
+            public void onChanged(List<Story> stories) {
+                Log.d(TAG, "onChanged: " + stories.get(0).getAuthor());
+                if (stories != null)
+                    Log.d(TAG, "onChanged: " + stories.size());
+                storyList = stories;
+                //Update recyclerView
+                showStories();
+            }
+        });
 
         init();
         initRecyclerViewClickListener();
         initSwipeRefreshLayout();
-        currentTopic = "android";
+        searchKey = "android";
     }
 
     @Override
@@ -74,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
 //        if (currentTopic != adapterView.getSelectedItem().toString()) {
 //            viewModel.clearDb();
 //        }
-        currentTopic = adapterView.getSelectedItem().toString();
-//        viewModel.setCurrentRequestParam(currentTopic);
+        searchKey = adapterView.getSelectedItem().toString();
+        storyViewModel.setSearchKey(searchKey);
 //        viewModel.update(currentTopic);
     }
 

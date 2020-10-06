@@ -16,6 +16,7 @@ import com.example.task8.data.repository.network.ApiFactory;
 import com.example.task8.data.repository.network.NewsApi;
 import com.example.task8.utils.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,8 +33,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class StoryRepository {
     private static final String TAG = "MyApp";
-    private List<Story> storyList;
-    private ApiFactory apiFactory;
     private StoryDao storyDao;
     private MutableLiveData<List<Story>> allStoriesLiveData = new MutableLiveData<>();
     @Inject NewsApi newsApi;
@@ -49,7 +48,8 @@ public class StoryRepository {
     }
 
     //Load data to LiveData from Web
-    public void getLiveDataFromWeb(String key) {
+    public LiveData<List<Story>> getLiveDataFromWeb(String key) {
+        List<Story> storyList = new ArrayList<>();
         Observable<StoryResponse> observable = newsApi.getPostsByDate(Constants.KEY, Constants.getCurrentDate(),
                 Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
         observable
@@ -83,6 +83,7 @@ public class StoryRepository {
                     @Override
                     public void onNext(Story story) {
                         Log.d(TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
+                        storyList.add(story);
                     }
 
                     @Override
@@ -93,8 +94,11 @@ public class StoryRepository {
                     @Override
                     public void onComplete() {
                         //DO NOTHING
+                        Log.d(TAG, "onComplete:");
+                        allStoriesLiveData.setValue(storyList);
                     }
                 });
+        return allStoriesLiveData;
     }
 
     //Load data to LiveData from Db
