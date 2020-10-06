@@ -1,13 +1,13 @@
-package com.example.task8.ui.viewmodel;
+package com.example.task8.aui_presentation.viewmodel;
 
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-import com.example.task8.business.StoryInteractor;
+import com.example.task8.business_domain.StoryInteractor;
 import com.example.task8.data.model.Story;
-import com.example.task8.data.repository.StoryRepository;
 
 import java.util.List;
 
@@ -17,23 +17,29 @@ public class StoryViewModel extends ViewModel {
     private String searchKey = "software";
     private StoryInteractor storyInteractor;
     private LiveData<List<Story>> storyListLiveData;
-    private LiveData<List<Story>> interactorLiveData;
 
     public StoryViewModel(StoryInteractor storyInteractor) {
         this.storyInteractor = storyInteractor;
     }
 //подписываемся на Обсервер Rx на репозиторий
     public LiveData<List<Story>> getStoryListLiveData() {
-        storyListLiveData = storyInteractor.getStoryListLiveData();
+        storyListLiveData = storyInteractor.getLiveDataFromRepository();
         return storyListLiveData;
     }
 
-    public void setSearchParam(String key) {
-        setSearchKey(key);
+    public void subscribeToRepository() {
+        storyInteractor.getLiveDataFromRepository().observeForever(new Observer<List<Story>>() {
+            @Override
+            public void onChanged(List<Story> stories) {
+
+            }
+        });
     }
 
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
+        Log.d(TAG, "StoryViewModel search key is = " + "\"" +  searchKey + "\"");
+
     }
 
     public String getSearchKey() {

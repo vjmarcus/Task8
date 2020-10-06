@@ -1,4 +1,4 @@
-package com.example.task8.ui.interfaces;
+package com.example.task8.aui_presentation.interfaces;
 
 
 import android.view.View;

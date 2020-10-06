@@ -1,4 +1,4 @@
-package com.example.task8.ui.view;
+package com.example.task8.aui_presentation.view;
 
 import android.content.Intent;
 import android.os.Bundle;

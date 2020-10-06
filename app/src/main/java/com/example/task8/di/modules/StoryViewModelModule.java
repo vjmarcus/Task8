@@ -1,14 +1,11 @@
 package com.example.task8.di.modules;
 
 import android.app.Application;
-import android.content.Context;
 
-import com.example.task8.App;
-import com.example.task8.business.StoryInteractor;
+import com.example.task8.business_domain.StoryInteractor;
 import com.example.task8.data.repository.StoryRepository;
-import com.example.task8.ui.viewmodel.StoryViewModel;
+import com.example.task8.aui_presentation.viewmodel.StoryViewModel;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;

@@ -1,18 +1,18 @@
 package com.example.task8.data.repository;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
 import com.example.task8.App;
 import com.example.task8.data.model.Story;
 import com.example.task8.data.model.StoryResponse;
 import com.example.task8.data.repository.db.StoryDao;
 import com.example.task8.data.repository.db.StoryDatabase;
-import com.example.task8.data.repository.network.ApiFactory;
 import com.example.task8.data.repository.network.NewsApi;
 import com.example.task8.utils.Constants;
 
@@ -25,7 +25,6 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
@@ -35,8 +34,10 @@ public class StoryRepository {
     private static final String TAG = "MyApp";
     private StoryDao storyDao;
     private MutableLiveData<List<Story>> allStoriesLiveData = new MutableLiveData<>();
-    @Inject NewsApi newsApi;
-    @Inject Context context;
+    @Inject
+    NewsApi newsApi;
+    @Inject
+    Context context;
 
 
     public StoryRepository(Application application) {
@@ -44,11 +45,10 @@ public class StoryRepository {
         StoryDatabase db = StoryDatabase.getInstance(application);
         storyDao = db.storyDao();
         Log.d(TAG, "Context " + context.getPackageName());
-
     }
 
     //Load data to LiveData from Web
-    public LiveData<List<Story>> getLiveDataFromWeb(String key) {
+    public LiveData<List<Story>> getLiveDataFromWeb() {
         List<Story> storyList = new ArrayList<>();
         Observable<StoryResponse> observable = newsApi.getPostsByDate(Constants.KEY, Constants.getCurrentDate(),
                 Constants.getCurrentDate(), 20, "en", Constants.API_KEY);

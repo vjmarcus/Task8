@@ -1,4 +1,4 @@
-package com.example.task8.ui.adapter;
+package com.example.task8.aui_presentation.adapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.task8.R;
 import com.example.task8.data.model.Story;
-import com.example.task8.ui.interfaces.RecyclerViewClickListener;
+import com.example.task8.aui_presentation.interfaces.RecyclerViewClickListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

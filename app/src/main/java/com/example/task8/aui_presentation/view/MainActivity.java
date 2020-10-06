@@ -1,4 +1,4 @@
-package com.example.task8.ui.view;
+package com.example.task8.aui_presentation.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
@@ -16,12 +16,12 @@ import android.widget.Spinner;
 
 import com.example.task8.App;
 import com.example.task8.R;
-import com.example.task8.business.StoryInteractor;
+import com.example.task8.business_domain.StoryInteractor;
 import com.example.task8.data.model.Story;
 import com.example.task8.data.repository.StoryRepository;
-import com.example.task8.ui.adapter.StoryAdapter;
-import com.example.task8.ui.interfaces.RecyclerViewClickListener;
-import com.example.task8.ui.viewmodel.StoryViewModel;
+import com.example.task8.aui_presentation.adapter.StoryAdapter;
+import com.example.task8.aui_presentation.interfaces.RecyclerViewClickListener;
+import com.example.task8.aui_presentation.viewmodel.StoryViewModel;
 
 import java.util.List;
 
@@ -66,13 +66,13 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//        Log.d(TAG, "Main onItemSelected: " + adapterView.getSelectedItem().toString());
+        Log.d(TAG, "Main onItemSelected: " + adapterView.getSelectedItem().toString());
 //        if (currentTopic != adapterView.getSelectedItem().toString()) {
 //            viewModel.clearDb();
 //        }
         searchKey = adapterView.getSelectedItem().toString();
         storyViewModel.setSearchKey(searchKey);
-//        viewModel.update(currentTopic);
+        storyInteractor.update(searchKey);
     }
 
     @Override

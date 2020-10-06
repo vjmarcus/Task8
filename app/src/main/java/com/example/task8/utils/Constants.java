@@ -17,4 +17,6 @@ public class Constants {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
         return simpleDateFormat.format(new Date(date));
     }
+
+
 }
