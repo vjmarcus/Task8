@@ -45,19 +45,7 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         App.getAppComponent().injectMainActivity(this);
-
-        storyViewModel.getStoryListLiveData().observe(this, new Observer<List<Story>>() {
-            @Override
-            public void onChanged(List<Story> stories) {
-                Log.d(TAG, "onChanged: " + stories.get(0).getAuthor());
-                if (stories != null)
-                    Log.d(TAG, "onChanged: " + stories.size());
-                storyList = stories;
-                //Update recyclerView
-                showStories();
-            }
-        });
-
+        SubscribeData(searchKey);
         init();
         initRecyclerViewClickListener();
         initSwipeRefreshLayout();
@@ -71,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
 //            viewModel.clearDb();
 //        }
         searchKey = adapterView.getSelectedItem().toString();
-        storyViewModel.setSearchKey(searchKey);
         storyInteractor.update(searchKey);
     }
 
@@ -96,6 +83,18 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
         recyclerView = findViewById(R.id.story_recycler);
     }
 
+    private void SubscribeData(String searchKey) {
+        storyViewModel.getStoryListLiveData(searchKey).observe(this, new Observer<List<Story>>() {
+            @Override
+            public void onChanged(List<Story> stories) {
+                Log.d(TAG, "MA onChanged: " + stories.size());
+                storyList = stories;
+                //Update recyclerView
+                showStories();
+            }
+        });
+    }
+
 
     private void initRecyclerViewClickListener() {
 //        recyclerViewClickListener = new RecyclerViewClickListener() {
@@ -112,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                viewModel.update(currentTopic);
+                storyInteractor.update(searchKey);
                 Log.d(TAG, "onRefresh: swipe");
                 swipeRefreshLayout.setRefreshing(false);
             }

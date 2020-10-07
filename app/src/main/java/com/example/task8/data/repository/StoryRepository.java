@@ -34,6 +34,7 @@ public class StoryRepository {
     private static final String TAG = "MyApp";
     private StoryDao storyDao;
     private MutableLiveData<List<Story>> allStoriesLiveData = new MutableLiveData<>();
+    private List<Story> storyList = new ArrayList<>();
     @Inject
     NewsApi newsApi;
     @Inject
@@ -48,9 +49,10 @@ public class StoryRepository {
     }
 
     //Load data to LiveData from Web
-    public LiveData<List<Story>> getLiveDataFromWeb() {
+    public LiveData<List<Story>> getLiveDataFromWeb(String searchKey) {
+        deleteAllStoriesInDb();
         List<Story> storyList = new ArrayList<>();
-        Observable<StoryResponse> observable = newsApi.getPostsByDate(Constants.KEY, Constants.getCurrentDate(),
+        Observable<StoryResponse> observable = newsApi.getPostsByDate(searchKey, Constants.getCurrentDate(),
                 Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
         observable
                 .subscribeOn(Schedulers.io())
@@ -82,7 +84,7 @@ public class StoryRepository {
 
                     @Override
                     public void onNext(Story story) {
-                        Log.d(TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
+//                        Log.d(TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
                         storyList.add(story);
                     }
 
@@ -96,6 +98,8 @@ public class StoryRepository {
                         //DO NOTHING
                         Log.d(TAG, "onComplete:");
                         allStoriesLiveData.setValue(storyList);
+                        addStoriesToDatabase(storyList);
+
                     }
                 });
         return allStoriesLiveData;
@@ -103,37 +107,44 @@ public class StoryRepository {
 
     //Load data to LiveData from Db
     public LiveData<List<Story>> getLiveDataFromDb() {
+        loadAllStories();
+        Log.d(TAG, "getLiveDataFromDb: after loadAllStories, storyList = " + storyList.size());
+        allStoriesLiveData.setValue(storyList);
         return allStoriesLiveData;
     }
 
-//    private void addStoriesToDatabase() {
-//        Log.d(TAG, "addStoriesToDatabase: ");
-//        for (int i = 0; i < storyList.size(); i++) {
-//            insert(storyList.get(i));
-//        }
-//    }
+    private void addStoriesToDatabase(List<Story> storyList) {
+        Log.d(TAG, "addStoriesToDatabase: lines is = " + storyList.size());
+        for (int i = 0; i < storyList.size(); i++) {
+            insert(storyList.get(i));
+        }
+    }
 
     public void deleteAllStoriesInDb() {
         new DeleteAllStoriesAsyncTask(storyDao).execute();
     }
 
-//    private void insert(Story story) {
-//        new InsertStoryAsyncTask(storyDao).execute(story);
-//    }
+    private void insert(Story story) {
+        new InsertStoryAsyncTask(storyDao).execute(story);
+    }
 
-//    private class InsertStoryAsyncTask extends AsyncTask<Story, Void, Void> {
-//        private StoryDao storyDao;
-//
-//        public InsertStoryAsyncTask(StoryDao storyDao) {
-//            this.storyDao = storyDao;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Story... stories) {
-//            storyDao.insert(stories[0]);
-//            return null;
-//        }
-//    }
+    private void loadAllStories(){
+        new LoadAllStoriesAsyncTask().execute();
+    }
+
+    private class InsertStoryAsyncTask extends AsyncTask<Story, Void, Void> {
+        private StoryDao storyDao;
+
+        public InsertStoryAsyncTask(StoryDao storyDao) {
+            this.storyDao = storyDao;
+        }
+
+        @Override
+        protected Void doInBackground(Story... stories) {
+            storyDao.insert(stories[0]);
+            return null;
+        }
+    }
 
     private class DeleteAllStoriesAsyncTask extends AsyncTask<Void, Void, Void> {
 
@@ -146,6 +157,15 @@ public class StoryRepository {
         @Override
         protected Void doInBackground(Void... voids) {
             storyDao.deleteAllStories();
+            return null;
+        }
+    }
+
+    private class LoadAllStoriesAsyncTask extends AsyncTask<Void, Void, List<Story>> {
+        @Override
+        protected List<Story> doInBackground(Void... voids) {
+            storyList = storyDao.getAllStoriesList();
+            Log.d(TAG, "doInBackground: Load = " + storyList.size());
             return null;
         }
     }

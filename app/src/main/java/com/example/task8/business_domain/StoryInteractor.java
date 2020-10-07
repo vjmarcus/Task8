@@ -24,34 +24,25 @@ public class StoryInteractor {
         liveDataFromRepository = new MutableLiveData<>();
     }
 
-    public void update(String currentTopic) {
-        if (loadFromDbOrLoadFromWEb(currentTopic)) {
+    public void update(String searchKey) {
+        if (loadFromDbOrLoadFromWEb(searchKey)) {
             Log.d(Constants.TAG, "viewModel getAllStoryData: load from db");
             storyRepository.getLiveDataFromDb();
         } else {
             Log.d(Constants.TAG, "viewModel getAllStoryData: load from WEB");
-            storyRepository.getLiveDataFromWeb();
+            storyRepository.getLiveDataFromWeb(searchKey);
         }
     }
 
     //Load from repository
-    public LiveData<List<Story>> getLiveDataFromRepository() {
-        liveDataFromRepository = storyRepository.getLiveDataFromWeb();
+    public LiveData<List<Story>> getLiveDataFromRepository(String searchKey) {
+        liveDataFromRepository = storyRepository.getLiveDataFromWeb(searchKey);
         return liveDataFromRepository;
     }
 
     public LiveData<List<Story>> getStoryListFromDb() {
         liveDataFromRepository = storyRepository.getLiveDataFromDb();
         return liveDataFromRepository;
-    }
-
-    public LiveData<List<Story>> getStoryListFromWeb() {
-        storyRepository.getLiveDataFromWeb();
-        return liveDataFromRepository;
-    }
-
-    public String getCurrentKey() {
-        return "software";
     }
 
     private Boolean loadFromDbOrLoadFromWEb(String currentTopic) {
