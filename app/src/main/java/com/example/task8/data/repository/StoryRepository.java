@@ -35,12 +35,10 @@ public class StoryRepository {
     private StoryDao storyDao;
     private MutableLiveData<List<Story>> liveDataFromWeb = new MutableLiveData<>();
     private MutableLiveData<List<Story>> liveDataFromDb = new MutableLiveData<>();
-    private List<Story> storyList = new ArrayList<>();
     @Inject
     NewsApi newsApi;
     @Inject
     Context context;
-
 
     public StoryRepository(Application application) {
         App.getAppComponent().injectStoryRepository(this);
@@ -164,7 +162,7 @@ public class StoryRepository {
     private class LoadAllStoriesAsyncTask extends AsyncTask<Void, Void, List<Story>> {
         @Override
         protected List<Story> doInBackground(Void... voids) {
-            storyList = storyDao.getAllStoriesList();
+            List<Story> storyList = storyDao.getAllStoriesList();
             Log.d(TAG, "doInBackground: Load = " + storyList.size());
             return null;
         }

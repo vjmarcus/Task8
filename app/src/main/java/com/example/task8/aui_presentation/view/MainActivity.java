@@ -97,13 +97,13 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
 
 
     private void initRecyclerViewClickListener() {
-//        recyclerViewClickListener = new RecyclerViewClickListener() {
-//            @Override
-//            public void recyclerViewListClicked(View sharedView, Story story, int position) {
-//                Log.d(TAG, "recyclerViewListClicked: ");
-//                goToSecondActivity(sharedView, story, position);
-//            }
-//        };
+        recyclerViewClickListener = new RecyclerViewClickListener() {
+            @Override
+            public void recyclerViewListClicked(View sharedView, Story story, int position) {
+                Log.d(TAG, "recyclerViewListClicked: ");
+                goToSecondActivity(sharedView, story, position);
+            }
+        };
     }
 
     private void initSwipeRefreshLayout() {

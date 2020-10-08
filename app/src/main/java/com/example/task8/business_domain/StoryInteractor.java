@@ -40,11 +40,6 @@ public class StoryInteractor {
         return liveDataFromRepository;
     }
 
-    public LiveData<List<Story>> getStoryListFromDb() {
-        liveDataFromRepository = storyRepository.getLiveDataFromDb();
-        return liveDataFromRepository;
-    }
-
     private Boolean loadFromDbOrLoadFromWEb(String currentTopic) {
         long currentTime = System.currentTimeMillis();
         if (((currentTime - updatedTime) < 60000) && currentTopic.equals(updatedTopic)) {
