@@ -33,7 +33,8 @@ import io.reactivex.schedulers.Schedulers;
 public class StoryRepository {
     private static final String TAG = "MyApp";
     private StoryDao storyDao;
-    private MutableLiveData<List<Story>> allStoriesLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<Story>> liveDataFromWeb = new MutableLiveData<>();
+    private MutableLiveData<List<Story>> liveDataFromDb = new MutableLiveData<>();
     private List<Story> storyList = new ArrayList<>();
     @Inject
     NewsApi newsApi;
@@ -97,20 +98,19 @@ public class StoryRepository {
                     public void onComplete() {
                         //DO NOTHING
                         Log.d(TAG, "onComplete:");
-                        allStoriesLiveData.setValue(storyList);
+                        liveDataFromWeb.setValue(storyList);
                         addStoriesToDatabase(storyList);
+                        liveDataFromDb.setValue(storyList);
 
                     }
                 });
-        return allStoriesLiveData;
+        return liveDataFromWeb;
     }
 
     //Load data to LiveData from Db
     public LiveData<List<Story>> getLiveDataFromDb() {
-        loadAllStories();
-        Log.d(TAG, "getLiveDataFromDb: after loadAllStories, storyList = " + storyList.size());
-        allStoriesLiveData.setValue(storyList);
-        return allStoriesLiveData;
+        Log.d(TAG, "getLiveDataFromDb: after loadAllStories, storyList = " + liveDataFromDb.getValue().size());
+        return liveDataFromDb;
     }
 
     private void addStoriesToDatabase(List<Story> storyList) {
