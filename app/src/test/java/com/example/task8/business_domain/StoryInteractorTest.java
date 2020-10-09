@@ -41,14 +41,20 @@ public class StoryInteractorTest {
     }
 
     @Test
-    public void loadFromDbOrLoadFromDb() {
+    public void notNull() {
         when(storyRepository.getLiveDataFromDb()).thenReturn(fakeLiveDataFromDb);
         Assert.assertNotNull(storyRepository.getLiveDataFromDb());
     }
 
     @Test
-    public void loadFromDbOrLoadFromWeb() {
+    public void loadFromDb() {
         when(storyRepository.getLiveDataFromWeb(KEY)).thenReturn(fakeLiveDataFromWeb);
-        Assert.assertNotNull(storyRepository.getLiveDataFromWeb(KEY));
+        Assert.assertEquals(fakeLiveDataFromWeb, storyRepository.getLiveDataFromWeb(KEY));
+    }
+
+    @Test
+    public void loadFromWeb() {
+        when(storyRepository.getLiveDataFromDb()).thenReturn(fakeLiveDataFromDb);
+        Assert.assertEquals(fakeLiveDataFromDb, storyRepository.getLiveDataFromDb());
     }
 }
