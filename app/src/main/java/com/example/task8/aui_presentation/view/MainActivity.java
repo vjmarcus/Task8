@@ -27,13 +27,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity implements  AdapterView.OnItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "MyApp";
-    @Inject StoryViewModel storyViewModel;
-    @Inject StoryInteractor storyInteractor;
-    @Inject StoryRepository storyRepository;
-
+    @Inject
+    StoryViewModel storyViewModel;
+    @Inject
+    StoryInteractor storyInteractor;
+    @Inject
+    StoryRepository storyRepository;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerViewClickListener recyclerViewClickListener;
     private RecyclerView recyclerView;
