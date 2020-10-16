@@ -38,35 +38,4 @@ public class StoryRepositoryTest {
         MockitoAnnotations.initMocks(this);
         storyRepository = new StoryRepository(application);
     }
-
-    @Test
-    public void getLiveDataFromWeb() {
-        storyRepository.getLiveDataFromWeb(KEY)
-    }
-
-    @Test
-    public void getLiveDataFromDb() {
-    }
-
-    @Test
-    public void deleteAllStoriesInDb() {
-    }
-
-        private List<Story> getFakeStoryList() {
-        List<Story> storyList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            storyList.add(new Story(new Source("sourceName"), "author", "title",
-                    "desc", "urlToImage", "publishedAt"));
-        }
-        return storyList;
-
-    }
-
-    public Observable<List<Story>> getFakeObservable() {
-        return Observable.just(getFakeStoryList());
-    }
-
-    public LiveData<List<Story>> getLiveData() {
-        return liveData;
-    }
 }

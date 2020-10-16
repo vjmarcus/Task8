@@ -35,6 +35,9 @@ public class StoryRepository {
     private StoryDao storyDao;
     private MutableLiveData<List<Story>> liveDataFromWeb = new MutableLiveData<>();
     private MutableLiveData<List<Story>> liveDataFromDb = new MutableLiveData<>();
+    private long updatedTime;
+    private String updatedTopic;
+    private Observable<StoryResponse> observable;
     @Inject
     NewsApi newsApi;
     @Inject
@@ -47,76 +50,100 @@ public class StoryRepository {
         Log.d(TAG, "Context " + context.getPackageName());
     }
 
-    //Load data to LiveData from Web
-    public LiveData<List<Story>> getLiveDataFromWeb(String searchKey) {
-        deleteAllStoriesInDb();
-        List<Story> storyList = new ArrayList<>();
-        Observable<StoryResponse> observable = newsApi.getPostsByDate(searchKey, Constants.getCurrentDate(),
+    public Observable<StoryResponse> getData(String key) {
+        if (loadFromDbOrLoadFromWEb(key)) {
+            Log.d(TAG, "Repo getData: from db");
+            return null ;
+        } else {
+            Log.d(TAG, "Repo getData: from web");
+            observable = newsApi.getPostsByDate(key, Constants.getCurrentDate(),
                 Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
-        observable
-                .subscribeOn(Schedulers.io())
-                .flatMapIterable(new Function<StoryResponse, Iterable<Story>>() {
-                    @Override
-                    public Iterable<Story> apply(StoryResponse storyResponse) throws Exception {
-                        return storyResponse.getArticles();
-                    }
-                })
-                .filter(new Predicate<Story>() {
-                    @Override
-                    public boolean test(Story story) throws Exception {
-                        return story.getTitle().length() > 20;
-                    }
-                })
-                .map(new Function<Story, Story>() {
-                    @Override
-                    public Story apply(Story story) throws Exception {
-                        story.setTitle(story.getTitle() + " filtered");
-                        return story;
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Story>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        //DO NOTHING
-                    }
-
-                    @Override
-                    public void onNext(Story story) {
-//                        Log.d(TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
-                        storyList.add(story);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        //DO NOTHING
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        //DO NOTHING
-                        Log.d(TAG, "onComplete:");
-                        liveDataFromWeb.setValue(storyList);
-                        addStoriesToDatabase(storyList);
-                        liveDataFromDb.setValue(storyList);
-
-                    }
-                });
-        return liveDataFromWeb;
-    }
-
-    //Load data to LiveData from Db
-    public LiveData<List<Story>> getLiveDataFromDb() {
-        Log.d(TAG, "getLiveDataFromDb: after loadAllStories, storyList = " + liveDataFromDb.getValue().size());
-        return liveDataFromDb;
-    }
-
-    private void addStoriesToDatabase(List<Story> storyList) {
-        Log.d(TAG, "addStoriesToDatabase: lines is = " + storyList.size());
-        for (int i = 0; i < storyList.size(); i++) {
-            insert(storyList.get(i));
+            return observable;
         }
     }
+
+    private Boolean loadFromDbOrLoadFromWEb(String currentTopic) {
+        long currentTime = System.currentTimeMillis();
+        if (((currentTime - updatedTime) < 60000) && currentTopic.equals(updatedTopic)) {
+            updatedTime = System.currentTimeMillis();
+            return true;
+        } else {
+            updatedTime = System.currentTimeMillis();
+            updatedTopic = currentTopic;
+            return false;
+        }
+    }
+//    //Load data to LiveData from Web
+//    public LiveData<List<Story>> getLiveDataFromWeb(String searchKey) {
+//        deleteAllStoriesInDb();
+//        List<Story> storyList = new ArrayList<>();
+//        Observable<StoryResponse> observable = newsApi.getPostsByDate(searchKey, Constants.getCurrentDate(),
+//                Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
+//        observable
+//                .subscribeOn(Schedulers.io())
+//                .flatMapIterable(new Function<StoryResponse, Iterable<Story>>() {
+//                    @Override
+//                    public Iterable<Story> apply(StoryResponse storyResponse) throws Exception {
+//                        return storyResponse.getArticles();
+//                    }
+//                })
+//                .filter(new Predicate<Story>() {
+//                    @Override
+//                    public boolean test(Story story) throws Exception {
+//                        return story.getTitle().length() > 20;
+//                    }
+//                })
+//                .map(new Function<Story, Story>() {
+//                    @Override
+//                    public Story apply(Story story) throws Exception {
+//                        story.setTitle(story.getTitle() + " filtered");
+//                        return story;
+//                    }
+//                })
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Observer<Story>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                        //DO NOTHING
+//                    }
+//
+//                    @Override
+//                    public void onNext(Story story) {
+////                        Log.d(TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
+//                        storyList.add(story);
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        //DO NOTHING
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//                        //DO NOTHING
+//                        Log.d(TAG, "onComplete:");
+//                        liveDataFromWeb.setValue(storyList);
+//                        addStoriesToDatabase(storyList);
+//                        liveDataFromDb.setValue(storyList);
+//
+//                    }
+//                });
+//        return liveDataFromWeb;
+//    }
+//
+//    //Load data to LiveData from Db
+//    public LiveData<List<Story>> getLiveDataFromDb() {
+//        Log.d(TAG, "getLiveDataFromDb: after loadAllStories, storyList = " + liveDataFromDb.getValue().size());
+//        return liveDataFromDb;
+//    }
+//
+//    private void addStoriesToDatabase(List<Story> storyList) {
+//        Log.d(TAG, "addStoriesToDatabase: lines is = " + storyList.size());
+//        for (int i = 0; i < storyList.size(); i++) {
+//            insert(storyList.get(i));
+//        }
+//    }
+
 
     public void deleteAllStoriesInDb() {
         new DeleteAllStoriesAsyncTask(storyDao).execute();
@@ -126,7 +153,7 @@ public class StoryRepository {
         new InsertStoryAsyncTask(storyDao).execute(story);
     }
 
-    private void loadAllStories(){
+    private void loadAllStories() {
         new LoadAllStoriesAsyncTask().execute();
     }
 

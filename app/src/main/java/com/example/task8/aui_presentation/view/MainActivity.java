@@ -47,11 +47,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         App.getAppComponent().injectMainActivity(this);
-        SubscribeData(searchKey);
+        subscribeData();
+        refreshData(searchKey);
         init();
         initRecyclerViewClickListener();
         initSwipeRefreshLayout();
-        searchKey = "android";
+            }
+
+    private void refreshData(String searchKey) {
+        Log.d(TAG, "Main refreshData:");
+        storyInteractor.getDataFromRepo(searchKey);
     }
 
     @Override
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //            viewModel.clearDb();
 //        }
         searchKey = adapterView.getSelectedItem().toString();
-        storyInteractor.update(searchKey);
+        storyInteractor.getDataFromRepo(searchKey);
     }
 
     @Override
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //DO NOTHING
     }
 
-    public void showStories() {
+    public void showStories(List<Story> storyList) {
         Log.d(TAG, "showStories: create adapter " + storyList.size());
         StoryAdapter storyAdapter = new StoryAdapter(storyList, recyclerViewClickListener);
         recyclerView.setAdapter(storyAdapter);
@@ -85,16 +90,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         recyclerView = findViewById(R.id.story_recycler);
     }
 
-    private void SubscribeData(String searchKey) {
-        storyViewModel.getStoryListLiveData(searchKey).observe(this, new Observer<List<Story>>() {
+    private void subscribeData() {
+        storyViewModel.getViewModelLiveData().observe(this, new Observer<List<Story>>() {
             @Override
-            public void onChanged(List<Story> stories) {
-                Log.d(TAG, "MA onChanged: " + stories.size());
-                storyList = stories;
-                //Update recyclerView
-                showStories();
+            public void onChanged(List<Story> storyList) {
+                Log.d(TAG, "View onChanged: = " + storyList.size());
+                showStories(storyList);
             }
         });
+//        storyViewModel.getStoryListLiveData(searchKey).observe(this, new Observer<List<Story>>() {
+//            @Override
+//            public void onChanged(List<Story> stories) {
+//                Log.d(TAG, "MA onChanged: " + stories.size());
+//                storyList = stories;
+//                //Update recyclerView
+//                showStories();
+//            }
+//        });
     }
 
 
@@ -113,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                storyInteractor.update(searchKey);
+                refreshData(searchKey);
                 Log.d(TAG, "onRefresh: swipe");
                 swipeRefreshLayout.setRefreshing(false);
             }

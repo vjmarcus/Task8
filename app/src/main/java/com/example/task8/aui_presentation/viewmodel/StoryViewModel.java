@@ -16,16 +16,21 @@ public class StoryViewModel extends ViewModel {
 
     private static final String TAG = "MyApp";
     private StoryInteractor storyInteractor;
-    private LiveData<List<Story>> storyListLiveData;
+    private LiveData<List<Story>> viewModelLiveData;
 
     public StoryViewModel(StoryInteractor storyInteractor) {
         this.storyInteractor = storyInteractor;
+        viewModelLiveData  = getStoryFromInter("software");
     }
 
-    public LiveData<List<Story>> getStoryListLiveData(String searchKey) {
-        storyListLiveData = storyInteractor.getLiveDataFromRepository(searchKey);
-        return storyListLiveData;
+    public LiveData<List<Story>> getStoryFromInter(String key) {
+        return storyInteractor.getInterLiveData();
     }
+
+    public LiveData<List<Story>> getViewModelLiveData() {
+        return viewModelLiveData;
+    }
+
     //> К интерактору, он возвращает Обсерваил лист стори, и тут я Обсервлю обсервл
     // Все что в репозитории, делаю в ВьюМодел
     // Паблик метод ГетЛайвДата, который возвращает пустой геттре, саму лайвДату

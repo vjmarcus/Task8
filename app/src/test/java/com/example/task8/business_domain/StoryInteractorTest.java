@@ -33,28 +33,4 @@ public class StoryInteractorTest {
         fakeLiveDataFromDb = new MutableLiveData<>();
         fakeLiveDataFromWeb = new MutableLiveData<>();
     }
-
-    @Test
-    public void getStoryListFromWebNotNull() {
-        when(storyRepository.getLiveDataFromDb()).thenReturn(fakeLiveDataFromDb);
-        Assert.assertNotNull(storyRepository.getLiveDataFromDb());
-    }
-
-    @Test
-    public void notNull() {
-        when(storyRepository.getLiveDataFromDb()).thenReturn(fakeLiveDataFromDb);
-        Assert.assertNotNull(storyRepository.getLiveDataFromDb());
-    }
-
-    @Test
-    public void loadFromDb() {
-        when(storyRepository.getLiveDataFromWeb(KEY)).thenReturn(fakeLiveDataFromWeb);
-        Assert.assertEquals(fakeLiveDataFromWeb, storyRepository.getLiveDataFromWeb(KEY));
-    }
-
-    @Test
-    public void loadFromWeb() {
-        when(storyRepository.getLiveDataFromDb()).thenReturn(fakeLiveDataFromDb);
-        Assert.assertEquals(fakeLiveDataFromDb, storyRepository.getLiveDataFromDb());
-    }
 }
