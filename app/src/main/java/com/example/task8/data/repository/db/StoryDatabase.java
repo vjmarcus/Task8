@@ -8,11 +8,12 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.task8.data.model.Story;
+import com.example.task8.data.model.StoryResponse;
 
 import javax.inject.Inject;
 
 
-@Database(entities = {Story.class}, version = 1)
+@Database(entities = {StoryResponse.class}, version = 2)
 public abstract class StoryDatabase extends RoomDatabase {
 
     private static StoryDatabase instance;
@@ -20,7 +21,7 @@ public abstract class StoryDatabase extends RoomDatabase {
     public static synchronized StoryDatabase getInstance(Context context){
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(), StoryDatabase.class,
-                    "story_database").build();
+                    "story_database").fallbackToDestructiveMigration().build();
         }
         return instance;
     }

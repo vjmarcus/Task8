@@ -52,7 +52,7 @@ public class StoryInteractor {
 
                     @Override
                     public void onNext(Story story) {
-                        Log.d(Constants.TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
+//                        Log.d(Constants.TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
                         storyList.add(story);
                     }
 

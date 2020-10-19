@@ -1,7 +1,15 @@
 package com.example.task8.utils;
 
+import androidx.room.TypeConverter;
+
+import com.example.task8.data.model.StoryResponse;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Constants {
@@ -17,6 +25,4 @@ public class Constants {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
         return simpleDateFormat.format(new Date(date));
     }
-
-
 }

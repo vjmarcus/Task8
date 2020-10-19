@@ -5,9 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.example.task8.App;
 import com.example.task8.data.model.Story;
 import com.example.task8.data.model.StoryResponse;
@@ -16,25 +13,19 @@ import com.example.task8.data.repository.db.StoryDatabase;
 import com.example.task8.data.repository.network.NewsApi;
 import com.example.task8.utils.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class StoryRepository {
     private static final String TAG = "MyApp";
     private StoryDao storyDao;
-    private MutableLiveData<List<Story>> liveDataFromWeb = new MutableLiveData<>();
-    private MutableLiveData<List<Story>> liveDataFromDb = new MutableLiveData<>();
     private long updatedTime;
     private String updatedTopic;
     private Observable<StoryResponse> observable;
@@ -53,11 +44,32 @@ public class StoryRepository {
     public Observable<StoryResponse> getData(String key) {
         if (loadFromDbOrLoadFromWEb(key)) {
             Log.d(TAG, "Repo getData: from db");
-            return null ;
+            loadStoryResponseFromDb();
+            return observable;
+
         } else {
             Log.d(TAG, "Repo getData: from web");
+            Call<StoryResponse> call = newsApi.getListResponse(key, Constants.getCurrentDate(),
+                    Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
+            call.enqueue(new Callback<StoryResponse>() {
+                @Override
+                public void onResponse(Call<StoryResponse> call, Response<StoryResponse> response) {
+                    if (response.isSuccessful()){
+                        Log.d(TAG, "onResponse: getArticles().size() = " + response.body().getArticles().size());
+                      insertToDb(response.body());
+                        List<Story> storyList = response.body().getArticles();
+                        Log.d(TAG, "onResponse: storyList =  " + storyList.size());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<StoryResponse> call, Throwable t) {
+                    Log.d(TAG, "onFailure call: " + t.getMessage());
+
+                }
+            });
             observable = newsApi.getPostsByDate(key, Constants.getCurrentDate(),
-                Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
+                    Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
             return observable;
         }
     }
@@ -149,15 +161,15 @@ public class StoryRepository {
         new DeleteAllStoriesAsyncTask(storyDao).execute();
     }
 
-    private void insert(Story story) {
-        new InsertStoryAsyncTask(storyDao).execute(story);
+    private void insertToDb(StoryResponse storyResponse) {
+        new InsertStoryAsyncTask(storyDao).execute(storyResponse);
     }
 
-    private void loadAllStories() {
-        new LoadAllStoriesAsyncTask().execute();
+    private void loadStoryResponseFromDb() {
+        new LoadStoryResponseAsyncTask(storyDao);
     }
 
-    private class InsertStoryAsyncTask extends AsyncTask<Story, Void, Void> {
+    private class InsertStoryAsyncTask extends AsyncTask<StoryResponse, Void, Void> {
         private StoryDao storyDao;
 
         public InsertStoryAsyncTask(StoryDao storyDao) {
@@ -165,8 +177,8 @@ public class StoryRepository {
         }
 
         @Override
-        protected Void doInBackground(Story... stories) {
-            storyDao.insert(stories[0]);
+        protected Void doInBackground(StoryResponse... storyResponses) {
+            storyDao.insert(storyResponses[0]);
             return null;
         }
     }
@@ -186,12 +198,25 @@ public class StoryRepository {
         }
     }
 
-    private class LoadAllStoriesAsyncTask extends AsyncTask<Void, Void, List<Story>> {
+    private class LoadStoryResponseAsyncTask extends AsyncTask<Void, Void, List<StoryResponse>> {
+
+        private StoryDao storyDao;
+
+        public LoadStoryResponseAsyncTask(StoryDao storyDao) {
+            this.storyDao = storyDao;
+        }
+
         @Override
-        protected List<Story> doInBackground(Void... voids) {
-            List<Story> storyList = storyDao.getAllStoriesList();
-            Log.d(TAG, "doInBackground: Load = " + storyList.size());
+        protected List<StoryResponse> doInBackground(Void... voids) {
+            List<StoryResponse> responseList = storyDao.getAll();
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<StoryResponse> storyResponses) {
+            super.onPostExecute(storyResponses);
+            Log.d(TAG, "doInBackground: LOAD RESPONSE " + storyResponses.size());
+
         }
     }
 
