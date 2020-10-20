@@ -53,8 +53,6 @@ public class StoryRepository {
         } else {
             Log.d(TAG, "Repo getData: from web");
             deleteAllStoriesInDb();
-            Call<StoryResponse> call = newsApi.getResponse(key, Constants.getCurrentDate(),
-                    Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
 
             return newsApi.getPostsByDate(key, Constants.getCurrentDate(),
                     Constants.getCurrentDate(), 20, "en", Constants.API_KEY);

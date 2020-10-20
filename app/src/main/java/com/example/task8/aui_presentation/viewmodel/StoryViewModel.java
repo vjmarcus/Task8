@@ -31,6 +31,12 @@ public class StoryViewModel extends ViewModel {
         return viewModelLiveData;
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        // Disposable.dispose();
+        // Отписать Rx
+    }
     //> К интерактору, он возвращает Обсерваил лист стори, и тут я Обсервлю обсервл
     // Все что в репозитории, делаю в ВьюМодел
     // Паблик метод ГетЛайвДата, который возвращает пустой геттре, саму лайвДату

@@ -34,6 +34,7 @@ public class StoryInteractor {
         return interLiveData;
     }
 
+    // убрать подписку из слоя!!! Подписка во ВьюМодел
     public void getDataFromRepo(String searchKey) {
         storyList.clear();
         storyRepository.getData(searchKey)
