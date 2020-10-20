@@ -35,6 +35,7 @@ public class StoryInteractor {
     }
 
     public void getDataFromRepo(String searchKey) {
+        storyList.clear();
         storyRepository.getData(searchKey)
                 .subscribeOn(Schedulers.io())
                 .flatMapIterable((Function<StoryResponse, Iterable<Story>>) StoryResponse::getArticles)

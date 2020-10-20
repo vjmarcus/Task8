@@ -11,14 +11,6 @@ import retrofit2.http.Query;
 
 public interface NewsApi {
 
-//    @GET("everything")
-//    Call<StoryList> getPostsByDate(@Query("q") String key,
-//                                   @Query("from") String fromDate,
-//                                   @Query("to") String toDate,
-//                                   @Query("pageSize") int pageSize,
-//                                   @Query("language") String language,
-//                                   @Query("apiKey") String apiKey);
-
     @GET("everything")
     Observable<StoryResponse> getPostsByDate(@Query("q") String key,
                                              @Query("from") String fromDate,
@@ -28,10 +20,10 @@ public interface NewsApi {
                                              @Query("apiKey") String apiKey);
 
     @GET("everything")
-    Call<StoryResponse> getListResponse(@Query("q") String key,
-                                              @Query("from") String fromDate,
-                                              @Query("to") String toDate,
-                                              @Query("pageSize") int pageSize,
-                                              @Query("language") String language,
-                                              @Query("apiKey") String apiKey);
+    Call<StoryResponse> getResponse(@Query("q") String key,
+                                    @Query("from") String fromDate,
+                                    @Query("to") String toDate,
+                                    @Query("pageSize") int pageSize,
+                                    @Query("language") String language,
+                                    @Query("apiKey") String apiKey);
 }

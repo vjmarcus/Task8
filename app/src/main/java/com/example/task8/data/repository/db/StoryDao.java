@@ -10,15 +10,26 @@ import com.example.task8.data.model.Story;
 import com.example.task8.data.model.StoryResponse;
 
 import java.util.List;
+import java.util.Observable;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 @Dao
 public interface StoryDao {
 
     @Insert
-    void insert(StoryResponse storyResponse);
+    Completable insert(StoryResponse storyResponse);
 
     @Query("SELECT * FROM story_response_table")
-    List<StoryResponse> getAll();
+    Single<List<StoryResponse>> getResponseList();
+
+    @Query("DELETE FROM story_response_table")
+    Single<Integer> deleteAll();
+
+    @Query("SELECT * FROM story_response_table WHERE id = (SELECT MAX(id) FROM story_response_table)")
+    Single<StoryResponse> getSingleResponse();
+
 
 //    @Insert
 //    void insert(Story story);

@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private RecyclerViewClickListener recyclerViewClickListener;
     private RecyclerView recyclerView;
     private String searchKey;
-    private List<Story> storyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //            viewModel.clearDb();
 //        }
         searchKey = adapterView.getSelectedItem().toString();
-        storyInteractor.getDataFromRepo(searchKey);
+        refreshData(searchKey);
     }
 
     @Override
