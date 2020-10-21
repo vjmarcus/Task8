@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         App.getAppComponent().injectMainActivity(this);
         subscribeData();
-        refreshData(searchKey);
         init();
         initRecyclerViewClickListener();
         initSwipeRefreshLayout();

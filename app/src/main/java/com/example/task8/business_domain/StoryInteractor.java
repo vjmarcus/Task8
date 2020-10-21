@@ -13,6 +13,7 @@ import com.example.task8.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -36,38 +37,40 @@ public class StoryInteractor {
 
     // убрать подписку из слоя!!! Подписка во ВьюМодел
     public void getDataFromRepo(String searchKey) {
-        storyList.clear();
-        storyRepository.getData(searchKey)
-                .subscribeOn(Schedulers.io())
-                .flatMapIterable((Function<StoryResponse, Iterable<Story>>) StoryResponse::getArticles)
-                .filter(story -> story.getTitle().length() > 20)
-                .map(story -> {
-                    story.setTitle(story.getTitle() + " filtered");
-                    return story;
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Story>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        //DO NOTHING
-                    }
 
-                    @Override
-                    public void onNext(Story story) {
-//                        Log.d(Constants.TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
-                        storyList.add(story);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        //DO NOTHING
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        interLiveData.setValue(storyList);
-                    }
-                });
+//        storyList.clear();
+//        Observable.just()storyRepository.getData(searchKey)
+        storyRepository.getData(searchKey);
+//                .subscribeOn(Schedulers.io())
+//                .flatMapIterable((Function<StoryResponse, Iterable<Story>>) StoryResponse::getArticles)
+//                .filter(story -> story.getTitle().length() > 20)
+//                .map(story -> {
+//                    story.setTitle(story.getTitle() + " filtered");
+//                    return story;
+//                })
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Observer<Story>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                        //DO NOTHING
+//                    }
+//
+//                    @Override
+//                    public void onNext(Story story) {
+////                        Log.d(Constants.TAG, "onNext: " + story.getTitle() + " " + story.getTitle().length());
+//                        storyList.add(story);
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        //DO NOTHING
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//                        interLiveData.setValue(storyList);
+//                    }
+//                });
     }
 
 

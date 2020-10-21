@@ -40,4 +40,5 @@ public class StoryResponse implements Serializable {
     public int getId() {
         return id;
     }
+
 }
