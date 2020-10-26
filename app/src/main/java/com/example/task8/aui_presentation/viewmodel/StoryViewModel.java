@@ -22,6 +22,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -33,7 +34,7 @@ public class StoryViewModel extends ViewModel {
     private MutableLiveData<List<Story>> viewModelLiveData = new MutableLiveData<>();
     private String searchKey;
     private List<Story> storyList = new ArrayList<>();
-    private Disposable disposable;
+    private CompositeDisposable compositeDisposable;
 
 
     public StoryViewModel(StoryInteractor storyInteractor) {
@@ -57,7 +58,7 @@ public class StoryViewModel extends ViewModel {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
                         Log.d(Constants.TAG, ": ");
-                        disposable = d;
+                        compositeDisposable.add(d);
                     }
                     @Override
                     public void onNext(@NonNull Story story) {
@@ -86,8 +87,7 @@ public class StoryViewModel extends ViewModel {
     protected void onCleared() {
         super.onCleared();
         Log.d(TAG, "StoryViewModel onCleared: disposable");
-        disposable.dispose();
-        // Disposable.dispose();
+        compositeDisposable.dispose();
         // Отписать Rx
     }
 
