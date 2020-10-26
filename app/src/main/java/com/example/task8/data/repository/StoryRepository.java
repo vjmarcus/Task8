@@ -38,7 +38,6 @@ public class StoryRepository {
     NewsApi newsApi;
     @Inject
     Context context;
-    private StoryResponse storyResponse;
 
     public StoryRepository(Application application) {
         App.getAppComponent().injectStoryRepository(this);
@@ -49,16 +48,10 @@ public class StoryRepository {
 
     public StoryResponse getData(String key) {
         if (loadFromDbOrLoadFromWEb(key)) {
-            Log.d(TAG, "Repo getData: from db");
-            // return from db
             return null;
         } else {
             Log.d(TAG, "Repo getData: from web");
-                StoryResponse storyResponse = null;
-            Log.d(TAG, "getData: response" + newsApi.getCallStoryResponse(key, Constants.getCurrentDate(),
-                        Constants.getCurrentDate(), 20, "en", Constants.API_KEY).request());
-
-            return storyResponse;
+            return null;
         }
     }
 
