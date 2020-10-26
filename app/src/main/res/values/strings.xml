@@ -7,6 +7,7 @@
     <string name="science">Science</string>
     <string name="technology">Technology</string>
     <string name="software">Software</string>
+
     <string-array name="topics">
         <item>software</item>
         <item>bitcoin</item>

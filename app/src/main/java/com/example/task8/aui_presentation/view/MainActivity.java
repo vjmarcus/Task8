@@ -22,6 +22,7 @@ import com.example.task8.data.repository.StoryRepository;
 import com.example.task8.aui_presentation.adapter.StoryAdapter;
 import com.example.task8.aui_presentation.interfaces.RecyclerViewClickListener;
 import com.example.task8.aui_presentation.viewmodel.StoryViewModel;
+import com.example.task8.utils.Constants;
 
 import java.util.List;
 
@@ -50,11 +51,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         init();
         initRecyclerViewClickListener();
         initSwipeRefreshLayout();
-            }
+    }
 
     private void refreshData(String searchKey) {
         Log.d(TAG, "Main refreshData:");
-        storyInteractor.getDataFromRepo(searchKey);
+        storyViewModel.getDataFromInter(searchKey);
     }
 
     @Override
@@ -91,11 +92,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void subscribeData() {
         storyViewModel.getViewModelLiveData().observe(this, new Observer<List<Story>>() {
             @Override
-            public void onChanged(List<Story> storyList) {
-                Log.d(TAG, "View onChanged: = " + storyList.size());
-                showStories(storyList);
+            public void onChanged(List<Story> stories) {
+                Log.d(Constants.TAG, "Main: " + stories.size());
+                showStories(stories);
             }
         });
+
 //        storyViewModel.getStoryListLiveData(searchKey).observe(this, new Observer<List<Story>>() {
 //            @Override
 //            public void onChanged(List<Story> stories) {
@@ -107,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //        });
     }
 
+    public String getSearchKey() {
+        return searchKey;
+    }
 
     private void initRecyclerViewClickListener() {
         recyclerViewClickListener = new RecyclerViewClickListener() {

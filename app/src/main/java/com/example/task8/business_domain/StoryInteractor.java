@@ -23,24 +23,19 @@ import io.reactivex.schedulers.Schedulers;
 public class StoryInteractor {
 
     private StoryRepository storyRepository;
-    private MutableLiveData<List<Story>> interLiveData = new MutableLiveData<>();
-    private List<Story> storyList = new ArrayList<>();
 
 
     public StoryInteractor(StoryRepository storyRepository) {
         this.storyRepository = storyRepository;
     }
 
-    public LiveData<List<Story>> getInterLiveData() {
-        return interLiveData;
-    }
 
     // убрать подписку из слоя!!! Подписка во ВьюМодел
-    public void getDataFromRepo(String searchKey) {
-
+    public Observable<StoryResponse> getDataFromRepo(String searchKey) {
+        return storyRepository.getData(searchKey);
 //        storyList.clear();
 //        Observable.just()storyRepository.getData(searchKey)
-        storyRepository.getData(searchKey);
+//        storyRepository.getData(searchKey);
 //                .subscribeOn(Schedulers.io())
 //                .flatMapIterable((Function<StoryResponse, Iterable<Story>>) StoryResponse::getArticles)
 //                .filter(story -> story.getTitle().length() > 20)

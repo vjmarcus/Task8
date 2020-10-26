@@ -20,7 +20,8 @@ public class StoryResponseConverter {
 
     @TypeConverter
     public List<Story> toStoryResponse(String jsonString) {
-        Type type = new TypeToken<String>(){}.getType();
-        return new Gson().fromJson(jsonString, type);
+        Gson gson = new Gson();
+        TypeToken<List<Story>> token = new TypeToken<List<Story>>(){};
+        return gson.fromJson(jsonString, token.getType());
     }
 }

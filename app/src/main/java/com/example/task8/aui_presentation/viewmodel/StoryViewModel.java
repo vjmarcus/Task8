@@ -3,28 +3,79 @@ package com.example.task8.aui_presentation.viewmodel;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.task8.R;
+import com.example.task8.aui_presentation.view.MainActivity;
 import com.example.task8.business_domain.StoryInteractor;
+import com.example.task8.data.model.Source;
 import com.example.task8.data.model.Story;
+import com.example.task8.data.model.StoryResponse;
+import com.example.task8.utils.Constants;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class StoryViewModel extends ViewModel {
 
     private static final String TAG = "MyApp";
     private StoryInteractor storyInteractor;
-    private LiveData<List<Story>> viewModelLiveData;
+    private MutableLiveData<List<Story>> viewModelLiveData = new MutableLiveData<>();
+    private String searchKey;
+    private List<Story> storyList = new ArrayList<>();
+    private Disposable disposable;
+
 
     public StoryViewModel(StoryInteractor storyInteractor) {
         this.storyInteractor = storyInteractor;
-        viewModelLiveData  = getStoryFromInter("software");
+        getDataFromInter(searchKey);
     }
 
-    public LiveData<List<Story>> getStoryFromInter(String key) {
-        return storyInteractor.getInterLiveData();
+    public void getDataFromInter(String searchKey) {
+        storyList.clear();
+
+        storyInteractor.getDataFromRepo(searchKey)
+                .subscribeOn(Schedulers.io())
+                .flatMapIterable((Function<StoryResponse, Iterable<Story>>) StoryResponse::getArticles)
+                .filter(story -> story.getTitle().length() > 20)
+                .map(story -> {
+                    story.setTitle(story.getTitle() + " filtered");
+                    return story;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Story>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d(Constants.TAG, ": ");
+                        disposable = d;
+                    }
+                    @Override
+                    public void onNext(@NonNull Story story) {
+//                        Log.d(TAG, "StoryViewModel onNext: ");
+                        storyList.add(story);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.d(TAG, "StoryViewModel onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "StoryViewModel onComplete: size = " + storyList.size());
+                        viewModelLiveData.setValue(storyList);
+                    }
+                });
     }
 
     public LiveData<List<Story>> getViewModelLiveData() {
@@ -34,9 +85,12 @@ public class StoryViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+        Log.d(TAG, "StoryViewModel onCleared: disposable");
+        disposable.dispose();
         // Disposable.dispose();
         // Отписать Rx
     }
+
     //> К интерактору, он возвращает Обсерваил лист стори, и тут я Обсервлю обсервл
     // Все что в репозитории, делаю в ВьюМодел
     // Паблик метод ГетЛайвДата, который возвращает пустой геттре, саму лайвДату
