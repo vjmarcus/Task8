@@ -34,7 +34,7 @@ public class StoryViewModel extends ViewModel {
     private MutableLiveData<List<Story>> viewModelLiveData = new MutableLiveData<>();
     private String searchKey;
     private List<Story> storyList = new ArrayList<>();
-    private CompositeDisposable compositeDisposable;
+    CompositeDisposable disposable = new CompositeDisposable();;
 
 
     public StoryViewModel(StoryInteractor storyInteractor) {
@@ -58,7 +58,7 @@ public class StoryViewModel extends ViewModel {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
                         Log.d(Constants.TAG, ": ");
-                        compositeDisposable.add(d);
+                        disposable.add(d);
                     }
                     @Override
                     public void onNext(@NonNull Story story) {
@@ -87,8 +87,8 @@ public class StoryViewModel extends ViewModel {
     protected void onCleared() {
         super.onCleared();
         Log.d(TAG, "StoryViewModel onCleared: disposable");
-        compositeDisposable.dispose();
         // Отписать Rx
+        disposable.dispose();
     }
 
     //> К интерактору, он возвращает Обсерваил лист стори, и тут я Обсервлю обсервл
@@ -106,6 +106,8 @@ public class StoryViewModel extends ViewModel {
     // 7. подписка на лайвДату должна быть одна, а запрос данных где угодно, запрос новых новостей
     // 8. Отписаться от обсервалб , во вьюмодел метод ОнДейстрой, чтобы отписаться, добавить в диспозабл
     // или компос диспозабл, и отписывается в дестрое
+
+    // Написать Unit-тесты на основной функционал Domain и Data слоев приложени
 }
 
 
