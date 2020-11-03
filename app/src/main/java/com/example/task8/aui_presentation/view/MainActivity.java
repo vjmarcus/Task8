@@ -148,4 +148,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 .makeSceneTransitionAnimation(MainActivity.this, sharedView, "transition");
         startActivity(intent, compat.toBundle());
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }
