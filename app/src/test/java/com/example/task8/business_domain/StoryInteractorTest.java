@@ -1,36 +1,51 @@
 package com.example.task8.business_domain;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
+import com.example.task8.data.model.Source;
 import com.example.task8.data.model.Story;
+import com.example.task8.data.model.StoryResponse;
 import com.example.task8.data.repository.StoryRepository;
 
-import org.junit.Assert;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.internal.junit.MockitoTestListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import io.reactivex.Observable;
+
+import static org.junit.Assert.*;
 
 public class StoryInteractorTest {
 
-    private final String KEY = "key";
-    private LiveData<List<Story>> fakeLiveDataFromDb;
-    private LiveData<List<Story>> fakeLiveDataFromWeb;
     @Mock
-    private StoryRepository storyRepository;
-    private StoryInteractor storyInteractor;
+    StoryRepository mockStoryRepository;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        storyInteractor =  new StoryInteractor(storyRepository);
-        fakeLiveDataFromDb = new MutableLiveData<>();
-        fakeLiveDataFromWeb = new MutableLiveData<>();
+        Mockito.when(mockStoryRepository.getData("KEY")).thenReturn(getFakeResponse());
+    }
+
+    @Test
+    public void getDataFromRepo() {
+
+    }
+
+    private Observable<StoryResponse> getFakeResponse () {
+        List<Story> storyList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            storyList.add(new Story(new Source("sourceName"), "NaN", "NaN",
+                    "NaN", "NaN", "NaN"));
+        }
+        StoryResponse storyResponse = new StoryResponse(storyList);
+        return Observable.just(storyResponse);
+    }
+    @After
+    public void tearDown() throws Exception {
     }
 }

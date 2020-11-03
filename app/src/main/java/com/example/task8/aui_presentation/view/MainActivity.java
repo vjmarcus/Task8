@@ -109,12 +109,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(Constants.TAG, "MainActivity onResume: ");
-    }
-
     public String getSearchKey() {
         return searchKey;
     }

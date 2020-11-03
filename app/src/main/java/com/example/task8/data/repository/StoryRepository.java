@@ -5,13 +5,11 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.task8.App;
-import com.example.task8.data.model.Story;
 import com.example.task8.data.model.StoryResponse;
 import com.example.task8.data.repository.db.StoryDao;
 import com.example.task8.data.repository.db.StoryDatabase;
 import com.example.task8.data.repository.network.NewsApi;
 import com.example.task8.utils.Constants;
-import com.example.task8.utils.StoryResponseConverter;
 
 import java.util.List;
 
@@ -49,7 +47,7 @@ public class StoryRepository {
     public Observable<StoryResponse> getData(String key) {
         if (loadFromDbOrLoadFromWEb(key)) {
             Log.d(TAG, "Repo getData: from db");
-            observable = getAll()
+            observable = getAllFromDb()
                     .map(new Function<List<StoryResponse>, StoryResponse>() {
                         @Override
                         public StoryResponse apply(@NonNull List<StoryResponse> storyResponses) throws Exception {
@@ -124,7 +122,7 @@ public class StoryRepository {
         return storyDao.getLastAddedResponse();
     }
 
-    private Flowable<List<StoryResponse>> getAll() {
+    private Flowable<List<StoryResponse>> getAllFromDb() {
         return storyDao.getAll();
     }
 }
