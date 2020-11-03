@@ -64,10 +64,6 @@ public class StoryRepository {
             Observable<StoryResponse> observable = newsApi.getPostsByDate(key, Constants.getCurrentDate(),
                     Constants.getCurrentDate(), 20, "en", Constants.API_KEY);
             getStoryResponseFromObservable(observable);
-            StoryResponseConverter converter = new StoryResponseConverter();
-
-            List<Story> storyList = converter.toStoryResponse("[{\"author\":\"Reuters Staff\",\"description\":\"SAP forecast headwinds over the next few years as it rebounds from the coronavirus pandemic and forces the pace of its transition to cloud services, forecasting an acceleration in growth and profitability only after that.\",\"id\":0,\"publishedAt\":\"2020-10-26T06:47:00Z\",\"source\":{\"name\":\"Reuters\"},\"title\":\"SAP forecasts headwinds through 2023 as it forces cloud transition - Reuters India\",\"urlToImage\":\"https://static.reuters.com/resources/r/?m=02&d=20201026&t=2&i=1538810521&r=LYNXMPEG9P0EP&w=800\"},{\"author\":\"Amanda Cooper\",\"description\":\"Summary List PlacementShares in German software maker SAP fell by more than 17% on Monday, after the company cut its 2020 outlook, citing a slower-than-expected recovery from the coronavirus pandemic for many of its key customers.\\nSAP, Germany's largest softw…\",\"id\":0,\"publishedAt\":\"2020-10-26T10:29:07Z\",\"source\":{\"name\":\"Business Insider\"},\"title\":\"German tech firm SAP drops as much as 17% after cutting 2020 outlook due to slow recovery from coronavirus pandemic\",\"urlToImage\":\"https://i.insider.com/5f9698b7f21803001222bdae?width=1200&format=jpeg\"}]");
-            Log.d(TAG, "StoryRepository getData:!!!! " + storyList.size());
             return observable;
         }
     }

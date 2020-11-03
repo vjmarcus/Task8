@@ -34,7 +34,7 @@ public class StoryViewModel extends ViewModel {
     private MutableLiveData<List<Story>> viewModelLiveData = new MutableLiveData<>();
     private String searchKey;
     private List<Story> storyList = new ArrayList<>();
-    private CompositeDisposable compositeDisposable;
+    private CompositeDisposable disposable;
 
 
     public StoryViewModel(StoryInteractor storyInteractor) {
@@ -44,37 +44,28 @@ public class StoryViewModel extends ViewModel {
 
     public void getDataFromInter(String searchKey) {
         storyList.clear();
-
         storyInteractor.getDataFromRepo(searchKey)
                 .subscribeOn(Schedulers.io())
-                .flatMapIterable((Function<StoryResponse, Iterable<Story>>) StoryResponse::getArticles)
-                .filter(story -> story.getTitle().length() > 20)
-                .map(story -> {
-                    story.setTitle(story.getTitle() + " filtered");
-                    return story;
-                })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Story>() {
+                .subscribe(new Observer<List<Story>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-                        Log.d(Constants.TAG, ": ");
-                        compositeDisposable.add(d);
+
                     }
+
                     @Override
-                    public void onNext(@NonNull Story story) {
-//                        Log.d(TAG, "StoryViewModel onNext: ");
-                        storyList.add(story);
+                    public void onNext(@NonNull List<Story> stories) {
+                        viewModelLiveData.setValue(stories);
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        Log.d(TAG, "StoryViewModel onError: " + e.getMessage());
+
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.d(TAG, "StoryViewModel onComplete: size = " + storyList.size());
-                        viewModelLiveData.setValue(storyList);
+
                     }
                 });
     }
@@ -86,8 +77,8 @@ public class StoryViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        Log.d(TAG, "StoryViewModel onCleared: disposable");
-        compositeDisposable.dispose();
+
+        // Disposable.dispose();
         // Отписать Rx
     }
 
