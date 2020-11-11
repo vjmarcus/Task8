@@ -33,4 +33,7 @@ public interface StoryDao {
 
     @Query("SELECT * FROM story_response_table")
     Flowable<List<StoryResponse>> getAll();
+
+    @Query("SELECT * FROM story_response_table WHERE id = :storyId")
+    Flowable<StoryResponse> getResponseById(Integer storyId);
 }

@@ -31,6 +31,7 @@ public class StoryInteractor {
     }
 
     public Observable<List<Story>> getDataFromRepo(String searchKey) {
+        storyRepository.initDb();
         return storyRepository.getData(searchKey)
                 .map(new Function<StoryResponse, List<Story>>() {
                     @Override
