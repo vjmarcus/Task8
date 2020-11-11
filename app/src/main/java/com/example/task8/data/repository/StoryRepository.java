@@ -32,17 +32,16 @@ public class StoryRepository {
     private long updatedTime;
     private String updatedTopic;
     private Observable<StoryResponse> observable;
-    @Inject
     NewsApi newsApi;
-    @Inject
     Context context;
 
-    public StoryRepository(Application application) {
-        App.getAppComponent().injectStoryRepository(this);
+    public StoryRepository(Application application, NewsApi newsApi, Context context) {
+//        App.getAppComponent().injectStoryRepository(this);
+        this.newsApi = newsApi;
+        this.context = context;
         StoryDatabase db = StoryDatabase.getInstance(application);
         storyDao = db.storyDao();
-        Log.d(TAG, "Context " + context.getPackageName());
-    }
+        Log.d(Constants.TAG, "StoryRepository created: ");    }
 
     public Observable<StoryResponse> getData(String key) {
         if (loadFromDbOrLoadFromWEb(key)) {
