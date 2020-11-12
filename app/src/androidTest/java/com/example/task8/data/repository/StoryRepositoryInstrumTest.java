@@ -98,7 +98,6 @@ public class StoryRepositoryInstrumTest {
     @Test
     public void insertAndGetAllStory() {
         storyDao.insert(fakeStoryResponse).blockingAwait();
-
         storyDao.getResponseById(111)
                 .test()
                 .assertValue(new Predicate<StoryResponse>() {

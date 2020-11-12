@@ -2,8 +2,10 @@ package com.example.task8.data.repository;
 
 import android.app.Application;
 import android.content.Context;
+
 import org.junit.Assert;
 import org.junit.Assert.*;
+
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -36,7 +38,6 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 public class StoryRepositoryTest {
 
-
     StoryRepository storyRepository;
     StoryDatabase db;
     StoryDao storyDao;
@@ -47,14 +48,6 @@ public class StoryRepositoryTest {
     NewsApi mockNewsApi;
     @Mock
     Context mockContext;
-
-    //Db test
-    @Before
-    public void createDb() {
-        Context context = ApplicationProvider.getApplicationContext();
-        db = Room.inMemoryDatabaseBuilder(context, StoryDatabase.class).build();
-        storyDao = db.storyDao();
-    }
 
     //Web test
     @Before
@@ -69,14 +62,7 @@ public class StoryRepositoryTest {
     public void writeUserAndReadInList() throws Exception {
         StoryResponse fakeStoryResponse = getFakeStoryResponse();
         storyDao.insert(fakeStoryResponse);
-
         Assert.assertThat(fakeStoryResponse, equalTo(getStoryResponseFromFlowable()));
-
-//        User user = TestUtil.createUser(3);
-//        user.setName("george");
-//        userDao.insert(user);
-//        List<User> byName = userDao.findUsersByName("george");
-//        assertThat(byName.get(0), equalTo(user));
     }
 
     @Test
@@ -87,12 +73,7 @@ public class StoryRepositoryTest {
                 0, "NULL", "NULL");
     }
 
-    @Test
-    public void getDataFromDb() {
-
-    }
-
-    private Observable<StoryResponse> getFakeResponse () {
+    private Observable<StoryResponse> getFakeResponse() {
         return Observable.just(getFakeStoryResponse());
     }
 

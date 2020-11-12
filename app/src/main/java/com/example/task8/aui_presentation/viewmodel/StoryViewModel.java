@@ -39,7 +39,6 @@ public class StoryViewModel extends ViewModel {
 
     public StoryViewModel(StoryInteractor storyInteractor) {
         this.storyInteractor = storyInteractor;
-        getDataFromInter(searchKey);
     }
 
     public void getDataFromInter(String searchKey) {
