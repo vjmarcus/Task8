@@ -22,6 +22,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,15 +57,13 @@ public class StoryViewModelTest {
 
     @Test
     public void testApi() {
-        when(mockStoryInteractor.getDataFromRepo("KEY")).thenReturn(getFakeObservableStoryList());
+        Observable<List<Story>> fakeObservable = getFakeObservable();
+        when(mockStoryInteractor.getDataFromRepo("KEY")).thenReturn(fakeObservable);
         storyViewModel.getDataFromInter("KEY");
-        verify(mockStoryInteractor).getDataFromRepo("KEY");
+        Assert.assertNotNull(storyViewModel.getViewModelLiveData());
     }
 
-
-
-
-    private Observable<List<Story>> getFakeObservableStoryList() {
+    private Observable<List<Story>> getFakeObservable() {
         List<Story> storyList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             storyList.add(new Story(new Source("sourceName"), "NaN", "NaN",

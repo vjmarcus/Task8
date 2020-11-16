@@ -43,6 +43,7 @@ public class StoryViewModel extends ViewModel {
 
     public void getDataFromInter(String searchKey) {
         storyList.clear();
+
         storyInteractor.getDataFromRepo(searchKey)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
